@@ -2,16 +2,89 @@ import pygame
 from random import randint
 import time
 import sys, os
+import tkinter as tk
+from tkinter import messagebox
+
 # משתנים- הגדרות של המשחק בהתחלה
 textToWin = ""
 showTextWiner = True
 ballMove = True
-ball_direction1 = ""
-ball_direction2 = ""
-ball_direction3 = ""
-ball_direction4 = ""
-ball_direction5 = ""
-ball_direction6 = ""
+ball_direction1, ball_direction2, ball_direction3, ball_direction4, ball_direction5, ball_direction6 = "","","","","",""
+balls_amount = 0
+difficulty_amount= 0
+score = 0
+running = False
+speed = 0 #מהירות תזוזת הכדור
+fast = 0 #מהירות השחקן
+
+
+# פונקציה להצגת חלון הגדרות
+def show_settings():
+    root = tk.Tk()
+    root.title("game settings")
+    root.geometry("535x620")  # גודל החלון
+    
+    # פונקציה לעדכון רמת הקושי
+    def update_difficulty(value):
+        difficulty_label.config(text="Difficulty:  " + str(value))
+    
+    # פונקציה לעדכון מספר הכדורים
+    def update_balls(value):
+        balls_label.config(text="Maximum number of balls:  " + str(value))
+    
+    # כמות כדורים
+    balls_label = tk.Label(root, text="Maximum number of balls:  6", font=("Arial", 14))
+    balls_label.pack()
+    
+    balls_scale = tk.Scale(root, from_=1, to=6, orient="horizontal", length=400, command=update_balls)
+    balls_scale.set(6)  # ברירת מחדל 3
+    balls_scale.pack()
+    
+    # רמת קושי
+    difficulty_label = tk.Label(root, text="Difficulty:  5", font=("Arial", 14))
+    difficulty_label.pack()
+    
+    difficulty_scale = tk.Scale(root, from_=1, to=10, orient="horizontal", length=400, command=update_difficulty)
+    difficulty_scale.set(5)  # ברירת מחדל 5
+    difficulty_scale.pack()
+    
+    # חוקי המשחק
+    rules_label = tk.Label(root, text="\nGame rules: ", font=("Arial", 14))
+    rules_label.pack()
+    
+    rules_text = tk.Label(root, text="In the game: you are the player\nand you must keep the ball from hitting the goal.\nYou play as the goalkeeper!\n\nButtons: To move right or left you need to\nuse the arrows on your keyboard\n\nThe goal of the game: to get as many points as possible\n\nThe course of the game: the balls move towards the goal and\n you have to touch them by moving. The more balls you hit,\nthe more points you get! The more points you get,\nthe more balls will be added to the game according to\nthe settings above. And the level of difficulty will\nalso change according to the settings above, good luck!", font=("Arial", 14))
+    rules_text.pack()
+    
+    # כפתור התחלה
+    def start_game_button():
+        global running
+        balls = balls_scale.get()
+        difficulty = difficulty_scale.get()
+        
+        root.destroy()
+        running = True
+        # קריאה לפונקציה שמתחילה את המשחק עם הפרמטרים הנבחרים
+        start_game(balls, difficulty)
+    
+    start_button = tk.Button(root, text="Start!", command=start_game_button, font=("Arial", 16))
+    start_button.pack(side=tk.BOTTOM, pady=20)  # הזזת הכפתור למטה
+    start_button.config(width=10)  # שינוי רוחב הכפתור
+    
+    root.mainloop()
+
+# פונקציה להתחיל את המשחק
+def start_game(balls, difficulty):
+    global balls_amount
+    global difficulty_amount
+    print("the game is starting!")
+    print("Maximum number of balls:", balls)
+    print("difficulty:", difficulty)
+    balls_amount = balls
+    difficulty_amount = difficulty
+
+
+# פתיחת חלון הגדרות
+show_settings()
 
 # This is a simple class that represents a Football
 # It has a position (x and y) and a strength (strength)
@@ -26,10 +99,21 @@ pygame.init()
 font = pygame.font.SysFont('bahnschrift', 32)
 font2 = pygame.font.SysFont('bahnschrift', 80)
 
-#משתנה שמראה לכדור לאן להגיע מהאמצע של השער
-score = 0
-game_time = 60
-time.sleep(0.5)
+
+#משתני הגדרות
+balls = balls_amount
+difficulty = difficulty_amount
+fast = 22 - difficulty
+speed = 0.55 + difficulty/10
+fast_first = fast + 1
+fast_second = fast_first +2
+fast_third = fast_second + 0.5
+fast_four = fast_third + 2
+speed_first = speed - 0.25
+speed_second = speed_first - 0.15
+speed_third = speed_second - 0.15
+
+
 
 # Set the width and height of the screen
 screen_width = 800
@@ -39,16 +123,9 @@ win = pygame.display.set_mode([screen_width, screen_height])
 # Set the title of the window
 pygame.display.set_caption('Football Game')
 
-# Create two Footballs with different strengths
-goal = Football(-312, 270)
-ball = Football(randint(0, 800), 50)
-ball2 = Football(randint(0, 800), 0)
-ball3 = Football(randint(0, 800), 0)
-ball4 = Football(randint(0, 800), 0)
-ball5 = Football(randint(0, 800), 0)
-ball6 = Football(randint(0, 800), 0)
-player = Football(400,300)
-
+# Create Footballs
+goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 50),Football(randint(0, 800), 0),Football(randint(0, 800), 0)
+ball4,ball5,ball6,player = Football(randint(0, 800), 0),Football(randint(0, 800), 0),Football(randint(0, 800), 0),Football(400,300)
 
 
 while ball.x > 290 and ball.x < 435:
@@ -124,7 +201,6 @@ def touch(ballX, ballY, direction):
     return ballX, ballY, direction
 
 
-
 # load the images
 # טעינת תמונות
 background_os = resource_path("images/background.png")
@@ -144,12 +220,6 @@ ball_6 = pygame.image.load(ball_os)
 goal_os = resource_path("images/goal.png")
 goal = pygame.image.load(goal_os)
 
-# Set the Football that is being Footballized to ball
-running = True
-
-#מהירות תזוזת הכדור
-speed = 1.1
-fast = 15
 
 # This is the game loop
 while running:
@@ -187,28 +257,27 @@ while running:
         pressedSpace = False
         ballMove = False
     
-    if score == 10:
-        speed = 0.8
-        fast = 16
-    elif score == 30:
-        speed = 0.7
-        fast = 18
-    elif score == 100:
-        speed = 0.55
-        fast = 18.5
-    elif score == 160:
-        speed = 0.45
-        fast = 16
+    if score == 10 and balls >= 2:
+        fast == fast_first
+    elif score == 30 and balls >= 3:
+        speed == speed_first
+        fast == fast_second
+    elif score == 100 and balls >= 4:
+        speed == speed_second
+        fast == fast_third
+    elif score == 160 and balls >= 5:
+        speed == speed_third
+        fast == fast_four
     ball.x, ball.y, ball_direction1 = touch(ball.x, ball.y, ball_direction1)
-    if score >= 10:
+    if score >= 10 and balls >= 2:
         ball2.x, ball2.y, ball_direction2 = touch(ball2.x, ball2.y, ball_direction2)
-    if score >= 30:
+    if score >= 30 and balls >= 3:
         ball3.x, ball3.y, ball_direction3 = touch(ball3.x, ball3.y, ball_direction3)
-    if score >= 60:
+    if score >= 60 and balls >= 4:
         ball4.x, ball4.y, ball_direction4 = touch(ball4.x, ball4.y, ball_direction4)
-    if score >= 100:
+    if score >= 100 and balls >= 5:
         ball5.x, ball5.y, ball_direction5 = touch(ball5.x, ball5.y, ball_direction5)
-    if score >= 150:
+    if score >= 150 and balls == 6:
         ball6.x, ball6.y, ball_direction6 = touch(ball6.x, ball6.y, ball_direction6)
     # ask if the player at the end of the window 
     # בודק אם השחקן בקצה החלון
@@ -226,15 +295,15 @@ while running:
     win.blit(player_,(player.x,player.y))
     if ballMove:
         win.blit(ball_,(ball.x, ball.y))
-    if score >= 10 and ballMove:
+    if score >= 10 and ballMove and balls >=2:
         win.blit(ball_2,(ball2.x, ball2.y))
-    if score >= 30 and ballMove:
+    if score >= 30 and ballMove and balls >=3:
         win.blit(ball_3,(ball3.x, ball3.y))
-    if score >= 60 and ballMove:
+    if score >= 60 and ballMove and balls >=4:
         win.blit(ball_4,(ball4.x, ball4.y))
-    if score >= 100 and ballMove:
+    if score >= 100 and ballMove and balls >=5:
         win.blit(ball_5,(ball5.x, ball5.y))
-    if score >= 150 and ballMove:
+    if score >= 150 and ballMove and balls ==6:
         win.blit(ball_6,(ball6.x, ball6.y))
 
 
