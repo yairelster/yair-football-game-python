@@ -192,10 +192,10 @@ while running:
         fast = 16
     elif score == 30:
         speed = 0.7
-        fast = 17.5
+        fast = 18
     elif score == 100:
         speed = 0.55
-        fast = 18
+        fast = 18.5
     elif score == 160:
         speed = 0.45
         fast = 16
