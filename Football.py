@@ -129,8 +129,8 @@ win = pygame.display.set_mode([screen_width, screen_height])
 pygame.display.set_caption('Football Game')
 
 # Create Footballs
-goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 70),Football(randint(0, 800), 70),Football(randint(0, 800), 70)
-ball4,ball5,ball6,player = Football(randint(0, 800), 70),Football(randint(0, 800), 70),Football(randint(0, 800), 70),Football(400,300)
+goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 100),Football(randint(0, 800), 100),Football(randint(0, 800), 100)
+ball4,ball5,ball6,player = Football(randint(0, 800), 100),Football(randint(0, 800), 100),Football(randint(0, 800), 100),Football(400,300)
 
 
 while ball.x > 290 and ball.x < 435:
