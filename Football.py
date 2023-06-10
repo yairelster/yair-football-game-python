@@ -104,6 +104,9 @@ font2 = pygame.font.SysFont('bahnschrift', 80)
 balls = balls_amount
 difficulty = difficulty_amount
 fast = 22.5 - difficulty
+if difficulty == 5:
+    fast = 16
+    speed = 0.9
 speed = 0.55 + difficulty/10
 fast_first = fast + 1
 fast_second = fast_first +2
@@ -126,8 +129,8 @@ win = pygame.display.set_mode([screen_width, screen_height])
 pygame.display.set_caption('Football Game')
 
 # Create Footballs
-goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 50),Football(randint(0, 800), 0),Football(randint(0, 800), 0)
-ball4,ball5,ball6,player = Football(randint(0, 800), 0),Football(randint(0, 800), 0),Football(randint(0, 800), 0),Football(400,300)
+goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 70),Football(randint(0, 800), 70),Football(randint(0, 800), 70)
+ball4,ball5,ball6,player = Football(randint(0, 800), 70),Football(randint(0, 800), 70),Football(randint(0, 800), 70),Football(400,300)
 
 
 while ball.x > 290 and ball.x < 435:
@@ -183,7 +186,6 @@ def resource_path(relative_path):
 def touch(ballX, ballY, direction):
     global score
     if player.y > ballY - 51 and player.y < ballY + 51 and player.x > ballX - 50.5 and player.x < ballX + 50.5:
-        print(speed)
         ballX = randint(0, 800)
         while ballX > 290 and ballX < 435:
             ballX = randint(0, 800)
