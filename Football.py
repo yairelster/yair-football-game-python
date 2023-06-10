@@ -103,15 +103,17 @@ font2 = pygame.font.SysFont('bahnschrift', 80)
 #משתני הגדרות
 balls = balls_amount
 difficulty = difficulty_amount
-fast = 22 - difficulty
+fast = 22.5 - difficulty
 speed = 0.55 + difficulty/10
 fast_first = fast + 1
 fast_second = fast_first +2
 fast_third = fast_second + 0.5
 fast_four = fast_third + 2
-speed_first = speed - 0.25
+speed_zero = speed - 0.15
+speed_first = speed_zero - 0.25
 speed_second = speed_first - 0.15
 speed_third = speed_second - 0.15
+
 
 
 
@@ -181,6 +183,7 @@ def resource_path(relative_path):
 def touch(ballX, ballY, direction):
     global score
     if player.y > ballY - 51 and player.y < ballY + 51 and player.x > ballX - 50.5 and player.x < ballX + 50.5:
+        print(speed)
         ballX = randint(0, 800)
         while ballX > 290 and ballX < 435:
             ballX = randint(0, 800)
@@ -227,7 +230,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
     # Update the screen
     pygame.display.flip()
 
@@ -258,6 +260,7 @@ while running:
         ballMove = False
     
     if score == 10 and balls >= 2:
+        speed = speed_zero
         fast == fast_first
     elif score == 30 and balls >= 3:
         speed == speed_first
