@@ -29,13 +29,12 @@ side1 = True
 def show_settings():
     root = tk.Tk()
     root.title("game settings")
-    root.geometry("535x656")  # גודל החלון
+    root.geometry("535x656") 
     
-    # פונקציה לעדכון רמת הקושי
     def update_difficulty(value):
         difficulty_label.config(text="Difficulty:  " + str(value))
     
-    # פונקציה לעדכון מספר הכדורים
+    # מספר הכדורים
     def update_balls(value):
         balls_label.config(text="Maximum number of balls:  " + str(value))
     
@@ -66,7 +65,6 @@ def show_settings():
     rules_label = tk.Label(root, text="\nGame rules: ", font=("Arial", 16))
     rules_label.pack()
     
-    # תיבת טקסט להצגת הוראות המשחק
     instructions_label = tk.Label(root, text=rules_text_single, font=("Arial", 14), wraplength=500, justify=tk.LEFT)
     instructions_label.pack(pady=10)
     
@@ -82,11 +80,10 @@ def show_settings():
         single_player_pressed.set(False)
         single_player_button.config(relief=tk.RAISED)
         two_players_button.config(relief=tk.SUNKEN)
-        # כאן תוכל להכניס הוראות חדשות עבור מצב 2 שחקנים
         new_instructions_text = "In the game: you are 2 players and you must keep the ball\nfrom hitting the goal.  You play as the goalkeeper!\n\nButtons: To move right or left you need to use the arrows\non your keyboard\nThe goal of the game: to get as many points as possible!\nThe player who won is the player who stays in the game the longest without being lose.\n\nDuring the game: the balls move towards the goal and\nyou have to touch them by moving. The more balls you hit,\nthe more points you get! The more points you get,\nthe more balls will be added to the game according to\nthe settings above. And the level of difficulty will\nalso change according to the settings above, good luck!"
         display_instructions(new_instructions_text)
     
-    # פונקציה להתחיל את המשחק
+    # התחלת המשחק
     def start_game():
         global running
         global balls_amount
@@ -117,18 +114,18 @@ def show_settings():
     
     # כפתור מצב שחקן יחיד
     single_player_button = tk.Button(root, text="Single Mode", command=start_game_single_player, font=("Arial", 16))
-    single_player_button.pack(side=tk.LEFT, pady=20)  # הזזת הכפתור לצד שמאל
-    single_player_button.config(width=15, relief=tk.SUNKEN)  # שינוי רוחב הכפתור והגדרתו כלחוץ
+    single_player_button.pack(side=tk.LEFT, pady=20)  
+    single_player_button.config(width=15, relief=tk.SUNKEN) 
     
     # כפתור מצב 2 שחקנים
     two_players_button = tk.Button(root, text="2 Players Mode", command=start_game_two_players, font=("Arial", 16))
-    two_players_button.pack(side=tk.RIGHT, pady=20)  # הזזת הכפתור לצד ימין
-    two_players_button.config(width=15)  # שינוי רוחב הכפתור
+    two_players_button.pack(side=tk.RIGHT, pady=20)  
+    two_players_button.config(width=15)  
     
     # כפתור התחלה
     start_button = tk.Button(root, text="Start!", command=start_game, font=("Arial", 16))
-    start_button.pack(pady=30)  # מרווח מעל ומתחת
-    start_button.config(width=10)  # שינוי רוחב הכפתור
+    start_button.pack(pady=30) 
+    start_button.config(width=10) 
     
     root.mainloop()
     
@@ -498,7 +495,7 @@ while running:
 
     win.blit(goal,(110, 363))
     if multi_player == False:
-        win.blit(winner, (180,270))
+        win.blit(end, (180,270))
     # update the changes
     # מעדכן את השינויים
     pygame.display.update()
