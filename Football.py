@@ -8,6 +8,7 @@ from tkinter import messagebox
 # משתנים- הגדרות של המשחק בהתחלה
 textToWin = ""
 textToEnd = ""
+textToRestart = ""
 showTextWiner = True
 ballMove = True
 ball_direction1, ball_direction2, ball_direction3, ball_direction4, ball_direction5, ball_direction6, = "","","","","",""
@@ -151,11 +152,17 @@ font2 = pygame.font.SysFont('bahnschrift', 80)
 #משתני הגדרות
 balls = balls_amount
 difficulty = difficulty_amount
-fast = 22.5 - difficulty
+fast = 21 - difficulty
+speed = 0.4 + difficulty/10
 if difficulty == 5:
     fast = 16
     speed = 0.9
-speed = 0.55 + difficulty/10
+if difficulty > 8:
+    fast +=1
+    speed -= 0.09
+if difficulty > 2:
+    fast -=1
+    speed += 0.09 
 fast_first = fast + 1
 fast_second = fast_first +2
 fast_third = fast_second + 0.5
@@ -164,7 +171,6 @@ speed_zero = speed - 0.15
 speed_first = speed_zero - 0.25
 speed_second = speed_first - 0.15
 speed_third = speed_second - 0.15
-
 
 
 
@@ -181,11 +187,11 @@ win = pygame.display.set_mode([screen_width, screen_height])
 pygame.display.set_caption('Football Game')
 
 # Create Footballs
-goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 100),Football(randint(0, 800), 100),Football(randint(0, 800), 100)
-ball4,ball5,ball6,player = Football(randint(0, 800), 100),Football(randint(0, 800), 100),Football(randint(0, 800), 100),Football(400,300)
+goal,ball,ball2,ball3 = Football(-312, 270),Football(randint(0, 800), 110),Football(randint(0, 800), 110),Football(randint(0, 800), 110)
+ball4,ball5,ball6,player = Football(randint(0, 800), 110),Football(randint(0, 800), 110),Football(randint(0, 800), 110),Football(400,300)
 if multi_player:
-    goal_2,ball7,ball8,ball9 = Football(512, 270),Football(randint(800, 1600), 100),Football(randint(800, 1600), 100),Football(randint(800, 1600), 100)
-    ball10,ball11,ball12,player2 = Football(randint(800, 1600), 100),Football(randint(800, 1600), 100),Football(randint(800, 1600), 100),Football(1200,300)
+    goal_2,ball7,ball8,ball9 = Football(512, 270),Football(randint(800, 1600), 110),Football(randint(800, 1600), 110),Football(randint(800, 1600), 110)
+    ball10,ball11,ball12,player2 = Football(randint(800, 1600), 110),Football(randint(800, 1600), 110),Football(randint(800, 1600), 110),Football(1200,300)
 
 while ball.x > 290 and ball.x < 435:
     ball.x = randint(0,800)
@@ -282,9 +288,9 @@ def touch(ballX, ballY, direction):
         while ballX > 290 and ballX < 435:
             ballX = randint(0, 800)
         ballY = 35
-        if multi_player:
+        if multi_player and ballMove:
             score += 0.5
-        else:
+        if multi_player == False and ballMove:
             score += 1
 
         if ballX > 350:
@@ -359,9 +365,10 @@ while running:
         # set the time delay of the elements on the screen
     # הגדר את השהיית הזמן של האלמנטים על המסך
     pygame.time.delay(30)
-    end = font2.render(textToEnd, False, "yellow")
-    winner = font2.render(textToWin, False, "yellow")
-
+    end = font2.render(textToEnd, False, "cyan")
+    winner = font2.render(textToWin, False, "cyan")
+    restart = font.render(textToRestart, False, "yellow")
+    restart2 = font.render(textToRestart, False, "yellow")
     # display the score in the top of the window
     # הצג את הניקוד בחלק העליון של החלון
     pygame.display.set_caption("Your Score: "+ str(score))
@@ -385,25 +392,26 @@ while running:
     if multi_player and keys[pygame.K_LEFT]:
         player2.x=player2.x-fast
 
-
-    if ballMove == True and (ball.y >= 480 or ball2.y >= 480 or ball3.y >= 480 or ball4.y >= 480 or ball5.y >= 480 or ball6.y >= 480):
+    if ballMove and (ball.y >= 480 or ball2.y >= 480 or ball3.y >= 480 or ball4.y >= 480 or ball5.y >= 480 or ball6.y >= 480):
         if multi_player:
             side1 = True
-        textToEnd = "Game Over!!"
-        textToWin = "You won!!"
         ballMove = False
         showTextWiner = True
         winner_x = True
         lose_x = False
-    if multi_player and ballMove == True and (ball7.y >= 480 or ball8.y >= 480 or ball9.y >= 480 or ball10.y >= 480 or ball11.y >= 480 or ball12.y >= 480):
+        textToEnd = "Game Over!!"
+        textToWin = "You won!!"
+        textToRestart = "Press Space To Restart"
+
+    if multi_player and ballMove and (ball7.y >= 480 or ball8.y >= 480 or ball9.y >= 480 or ball10.y >= 480 or ball11.y >= 480 or ball12.y >= 480):
         winner_x = False
         lose_x = True
         textToEnd = "Game Over!!"
         textToWin = "You won!!"
+        textToRestart = "Press Space To Restart"
         side1 = False
         showTextWiner = True
         ballMove = False
-    
     if score == 10 and balls >= 2:
         speed = speed_zero
         fast == fast_first
@@ -451,7 +459,101 @@ while running:
         player.x = 140
     if multi_player and player2.x < 940:
         player2.x = 940
+    if ballMove == False and keys[pygame.K_SPACE]:
+        time.sleep(0.5)
+        score = 0
+        player.x = 400
+        if ball.x > 350:
+            ball_direction1 = "left"
+        else:
+            ball_direction1 = "right"
+        if ball2.x > 350:
+            ball_direction2 = "left"
+        else:
+            ball_direction2 = "right"
+        if ball3.x > 350:
+            ball_direction3 = "left"
+        else:
+            ball_direction3 = "right"
+        if ball4.x > 350:
+            ball_direction4 = "left"
+        else:
+            ball_direction4 = "right"
+        if ball5.x > 350:
+            ball_direction5 = "left"
+        else:
+            ball_direction5 = "right"
+        if ball6.x > 350:
+            ball_direction6 = "left"
+        else:
+            ball_direction6 = "right"
+        fast = 21 - difficulty
+        speed = 0.4 + difficulty/10
+        if difficulty == 5:
+            fast = 16
+            speed = 0.9
+        if difficulty > 8:
+            fast +=1
+            speed -= 0.09
+        if difficulty > 2:
+            fast -=1
+            speed += 0.09 
+        fast_first = fast + 1
+        fast_second = fast_first +2
+        fast_third = fast_second + 0.5
+        fast_four = fast_third + 2
+        speed_zero = speed - 0.15
+        speed_first = speed_zero - 0.25
+        speed_second = speed_first - 0.15
+        speed_third = speed_second - 0.15
+        if difficulty == 5:
+            fast = 16
+            speed = 0.9
+        ball.y,ball2.y,ball3.y,ball4.y,ball5.y,ball6.y = 110,110,110,110,110,110
+        ball.x, ball.y, ball_direction1 = touch(ball.x, ball.y, ball_direction1)
+        ball2.x, ball2.y, ball_direction2 = touch(ball2.x, ball2.y, ball_direction2)
+        ball3.x, ball3.y, ball_direction3 = touch(ball3.x, ball3.y, ball_direction3)
+        ball4.x, ball4.y, ball_direction4 = touch(ball4.x, ball4.y, ball_direction4)
+        ball5.x, ball5.y, ball_direction5 = touch(ball5.x, ball5.y, ball_direction5)
+        ball6.x, ball6.y, ball_direction6 = touch(ball6.x, ball6.y, ball_direction6)
+        if multi_player:
+            ball7.y,ball8.y,ball9.y,ball10.y,ball11.y,ball12.y = 110,110,110,110,110,110
+            ball7.x, ball7.y, ball_direction7 = touch(ball7.x, ball7.y, ball_direction7)
+            ball8.x, ball8.y, ball_direction8 = touch(ball8.x, ball8.y, ball_direction8)
+            ball9.x, ball9.y, ball_direction9 = touch(ball9.x, ball9.y, ball_direction9)
+            ball10.x, ball10.y, ball_direction10 = touch(ball10.x, ball10.y, ball_direction10)
+            ball11.x, ball11.y, ball_direction11 = touch(ball11.x, ball11.y, ball_direction11)
+            ball12.x, ball12.y, ball_direction12 = touch(ball12.x, ball12.y, ball_direction12)
+            if ball7.x > 1150:
+                ball_direction7 = "left"
+            else:
+                ball_direction7 = "right"
 
+            if ball8.x > 1150:
+                ball_direction8 = "left"
+            else:
+                ball_direction8 = "right"
+
+            if ball9.x > 1150:
+                ball_direction9 = "left"
+            else:
+                ball_direction9 = "right"
+
+            if ball10.x > 1150:
+                ball_direction10 = "left"
+            else:
+                ball_direction10 = "right"
+
+            if ball11.x > 1150:
+                ball_direction11 = "left"
+            else:
+                ball_direction11 = "right"
+
+            if ball12.x > 1150:
+                ball_direction12 = "left"
+            else:
+                ball_direction12 = "right"
+        ballMove = True
     # fill the window with the background image
     # # ממלא את החלון בתמונת הרקע    
     win.blit(background_,(0,-50)) 
@@ -485,17 +587,24 @@ while running:
             win.blit(ball2_5,(ball11.x, ball11.y))
         if score >= 150 and ballMove and balls ==6:
             win.blit(ball2_6,(ball12.x, ball12.y))
-        if side1:
-            win.blit(winner, (980,270))
+        if side1 and ballMove == False:
+            win.blit(winner, (1050,270))
             win.blit(end, (180,270))
-        else:
-            win.blit(winner, (180,270))
+        elif side1 == False and ballMove == False:
+            win.blit(winner, (225,270))
             win.blit(end, (980,270))
-
+        if not ballMove:
+            if side1:
+                win.blit(restart, (225,246))
+                win.blit(restart2, (1050,246))
+            else:
+                win.blit(restart, (225,246))
+                win.blit(restart2, (1020,246))
 
     win.blit(goal,(110, 363))
-    if multi_player == False:
+    if multi_player == False and ballMove == False:
         win.blit(end, (180,270))
+        win.blit(restart, (225,246))
     # update the changes
     # מעדכן את השינויים
     pygame.display.update()
